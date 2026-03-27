@@ -1,0 +1,1135 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ZAITEX — Living Moodboard</title>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700&display=swap" rel="stylesheet">
+
+  <style>
+    /* ═══════════ TOKENS ═══════════ */
+    :root {
+      --bg: #020202;
+      --surface: #0a0a0a;
+      --surface-elevated: #111111;
+      --foreground: #ffffff;
+      --muted: #888888;
+      --accent: #c6f91f;
+      --accent-glow: rgba(198, 249, 31, 0.10);
+      --accent-dim: rgba(198, 249, 31, 0.04);
+      --border: rgba(255, 255, 255, 0.06);
+      --border-hover: rgba(255, 255, 255, 0.15);
+
+      --font-display: 'Bebas Neue', sans-serif;
+      --font-body: 'Satoshi', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+
+      --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    /* ═══════════ RESET ═══════════ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html {
+      scroll-behavior: smooth;
+      scrollbar-width: thin;
+      scrollbar-color: var(--accent) var(--surface);
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--foreground);
+      font-family: var(--font-body);
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+      cursor: default;
+    }
+
+    ::selection {
+      background: rgba(198, 249, 31, 0.25);
+      color: var(--foreground);
+    }
+
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: var(--surface); }
+    ::-webkit-scrollbar-thumb {
+      background: var(--accent);
+      border-radius: 9999px;
+      box-shadow: 0 0 8px rgba(198, 249, 31, 0.45);
+    }
+
+    img { display: block; max-width: 100%; }
+
+    /* ═══════════ GRAIN OVERLAY ═══════════ */
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      pointer-events: none;
+      opacity: 0.035;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+      background-size: 128px;
+    }
+
+    /* ═══════════ HERO / HEADER ═══════════ */
+    .hero {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      overflow: hidden;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 70% 50% at 50% 40%, rgba(198, 249, 31, 0.04), transparent 70%);
+      pointer-events: none;
+    }
+
+    .hero-eyebrow {
+      display: flex;
+      justify-content: space-between;
+      width: 100%;
+      position: absolute;
+      top: 40px;
+      padding: 0 50px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.15em;
+      color: rgba(250, 250, 249, 0.4);
+      text-transform: uppercase;
+      opacity: 0;
+      animation: fadeUp 1s var(--ease-out) 0.2s forwards;
+    }
+
+    .hero-title {
+      font-family: var(--font-display);
+      font-size: clamp(64px, 15vw, 220px);
+      font-weight: 400;
+      letter-spacing: 0.05em;
+      line-height: 0.95;
+      color: var(--foreground);
+      text-transform: uppercase;
+      opacity: 0;
+      animation: fadeUp 1.2s var(--ease-out) 0.4s forwards;
+    }
+
+    .hero-title .accent-dot {
+      color: var(--accent);
+      text-shadow: 0 0 40px rgba(198, 249, 31, 0.4);
+    }
+
+    .hero-subtitle {
+      font-family: var(--font-mono);
+      font-size: clamp(10px, 1.5vw, 14px);
+      text-transform: uppercase;
+      font-weight: 500;
+      color: rgba(250, 250, 249, 0.4);
+      margin-top: 32px;
+      letter-spacing: 0.25em;
+      opacity: 0;
+      animation: fadeUp 1s var(--ease-out) 0.7s forwards;
+    }
+
+    .hero-year {
+      position: absolute;
+      bottom: 40px;
+      right: 50px;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      color: rgba(250, 250, 249, 0.2);
+      text-transform: uppercase;
+      opacity: 0;
+      animation: fadeUp 1s var(--ease-out) 1s forwards;
+    }
+
+    .hero-scroll-hint {
+      position: absolute;
+      bottom: 40px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      opacity: 0;
+      animation: fadeUp 1s var(--ease-out) 1.2s forwards;
+    }
+
+    .hero-scroll-hint .line {
+      width: 1px; height: 32px;
+      background: linear-gradient(to bottom, rgba(250, 250, 249, 0.3), transparent);
+      animation: scrollPulse 2.5s ease-in-out infinite;
+    }
+
+    .hero-scroll-hint span {
+      font-family: var(--font-mono);
+      font-size: 8px;
+      letter-spacing: 0.2em;
+      color: rgba(250, 250, 249, 0.2);
+      text-transform: uppercase;
+    }
+
+    /* ═══════════ SECTION SHELL ═══════════ */
+    .section {
+      padding: clamp(60px, 10vw, 140px) clamp(20px, 5vw, 80px);
+      max-width: 1440px;
+      margin: 0 auto;
+      position: relative;
+    }
+
+    .section-label {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 48px;
+    }
+
+    .section-label .dot {
+      width: 4px; height: 4px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 8px rgba(198, 249, 31, 0.5);
+    }
+
+    .section-label span {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: rgba(250, 250, 249, 0.35);
+    }
+
+    /* Dividers */
+    .divider {
+      width: 100%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--border-hover), transparent);
+    }
+
+    /* ═══════════ COLOR PALETTE ═══════════ */
+    .palette-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 16px;
+    }
+
+    .swatch {
+      position: relative;
+      border-radius: 12px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform 0.4s var(--ease-out), box-shadow 0.4s var(--ease-out);
+      border: 1px solid var(--border);
+    }
+
+    .swatch:hover {
+      transform: translateY(-4px) scale(1.02);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+      border-color: var(--border-hover);
+    }
+
+    .swatch-color {
+      height: 120px;
+      transition: filter 0.4s ease;
+    }
+
+    .swatch:hover .swatch-color {
+      filter: brightness(1.15);
+    }
+
+    .swatch-info {
+      padding: 14px 16px;
+      background: var(--surface);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .swatch-name {
+      font-family: var(--font-body);
+      font-size: 12px;
+      font-weight: 500;
+      color: rgba(250, 250, 249, 0.7);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .swatch-hex {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: rgba(250, 250, 249, 0.35);
+      letter-spacing: 0.02em;
+      transition: color 0.3s ease;
+    }
+
+    .swatch:hover .swatch-hex { color: var(--accent); }
+
+    .swatch .copied-toast {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0.8);
+      background: var(--accent);
+      color: var(--bg);
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      padding: 6px 14px;
+      border-radius: 6px;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.3s var(--ease-out);
+    }
+
+    .swatch .copied-toast.show {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1);
+    }
+
+    /* ═══════════ TYPOGRAPHY ═══════════ */
+    .type-row {
+      padding: 40px 0;
+      border-bottom: 1px solid var(--border);
+      display: grid;
+      grid-template-columns: 200px 1fr;
+      gap: 32px;
+      align-items: baseline;
+      transition: background 0.4s ease;
+    }
+
+    .type-row:last-child { border-bottom: none; }
+
+    .type-row:hover {
+      background: rgba(255, 255, 255, 0.01);
+    }
+
+    .type-label {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: rgba(250, 250, 249, 0.3);
+      padding-top: 8px;
+    }
+
+    .type-label .purpose {
+      display: block;
+      margin-top: 6px;
+      color: rgba(250, 250, 249, 0.15);
+      font-size: 9px;
+      letter-spacing: 0.08em;
+    }
+
+    .type-specimen {
+      font-size: clamp(28px, 4vw, 56px);
+      line-height: 1.1;
+      transition: color 0.4s ease;
+    }
+
+    .type-row:hover .type-specimen {
+      color: var(--accent);
+    }
+
+    .type-display { font-family: var(--font-display); font-weight: 400; letter-spacing: 0.1em; text-transform: uppercase; }
+    .type-body { font-family: var(--font-body); font-weight: 500; }
+    .type-mono { font-family: var(--font-mono); font-weight: 400; font-size: clamp(18px, 2.5vw, 36px) !important; }
+
+    /* ═══════════ MASONRY GRID ═══════════ */
+    .masonry {
+      columns: 3;
+      column-gap: 16px;
+    }
+
+    .masonry-tile {
+      break-inside: avoid;
+      margin-bottom: 16px;
+      border-radius: 8px;
+      overflow: hidden;
+      position: relative;
+      cursor: pointer;
+      border: 1px solid var(--border);
+      transition: border-color 0.4s ease, transform 0.5s var(--ease-out);
+    }
+
+    .masonry-tile:hover {
+      border-color: rgba(198, 249, 31, 0.2);
+      transform: scale(1.015);
+      z-index: 10;
+    }
+
+    .masonry-tile img {
+      width: 100%;
+      display: block;
+      transition: transform 0.8s var(--ease-out), filter 0.5s ease;
+      filter: grayscale(20%) brightness(0.85);
+    }
+
+    .masonry-tile:hover img {
+      transform: scale(1.08);
+      filter: grayscale(0%) brightness(1);
+    }
+
+    .masonry-tile .overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(9,9,11,0.8) 0%, transparent 50%);
+      opacity: 0;
+      transition: opacity 0.4s ease;
+      display: flex;
+      align-items: flex-end;
+      padding: 16px;
+    }
+
+    .masonry-tile:hover .overlay { opacity: 1; }
+
+    .overlay-text {
+      font-family: var(--font-mono);
+      font-size: 9px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: rgba(250, 250, 249, 0.6);
+    }
+
+    /* ═══════════ MOOD KEYWORDS ═══════════ */
+    .keywords {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      justify-content: center;
+      padding: 80px 20px;
+    }
+
+    .keyword {
+      font-family: var(--font-display);
+      font-size: clamp(14px, 2vw, 22px);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: rgba(250, 250, 249, 0.12);
+      padding: 8px 20px;
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      border-radius: 9999px;
+      transition: all 0.4s var(--ease-out);
+      cursor: default;
+    }
+
+    .keyword:hover {
+      color: var(--accent);
+      border-color: rgba(198, 249, 31, 0.2);
+      text-shadow: 0 0 20px rgba(198, 249, 31, 0.3);
+      transform: translateY(-2px);
+    }
+
+    /* ═══════════ DIGITAL BLUEPRINTS ═══════════ */
+    .blueprints-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 32px;
+    }
+    
+    .blueprint-card {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      background: var(--surface);
+      transition: transform 0.4s var(--ease-out), border-color 0.4s ease;
+    }
+    .blueprint-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(198, 249, 31, 0.3);
+    }
+    
+    .blueprint-preview {
+      aspect-ratio: 4/5;
+      background: var(--bg);
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      border-bottom: 1px solid var(--border);
+    }
+    
+    /* Blueprint: Hero */
+    .bp-hero { align-items: center; justify-content: center; text-align: center; }
+    .bp-hero::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to top, var(--bg), transparent); pointer-events: none; }
+    .bp-hero-top { position: absolute; top: 16px; left: 16px; right: 16px; display: flex; justify-content: space-between; font-family: var(--font-mono); font-size: 8px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; }
+    .bp-hero-title { font-family: var(--font-display); font-size: 56px; color: var(--foreground); line-height: 0.9; text-transform: uppercase; margin-bottom: 16px;position:relative;z-index:2; }
+    .bp-hero-sub { font-family: var(--font-mono); font-size: 8px; color: var(--muted); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 16px; position:relative;z-index:2;}
+    
+    /* Blueprint: Editorial */
+    .bp-edit { display: flex; flex-direction: column; }
+    .bp-edit-text { flex: 1; padding: 24px; display: flex; flex-direction: column; justify-content: space-between; }
+    .bp-edit-title { font-family: var(--font-display); font-size: 42px; color: var(--foreground); line-height: 0.9; text-transform: uppercase; }
+    .bp-edit-img { flex: 1; background: #111; border-top: 1px solid var(--border); position: relative; }
+    
+    /* Blueprint: Minimalist */
+    .bp-min { align-items: flex-start; justify-content: space-between; padding: 32px; }
+    .bp-min-title { font-family: var(--font-body); font-weight: 500; font-size: 32px; color: var(--foreground); line-height: 1.1; }
+    .bp-min-circle { width: 80px; height: 80px; border-radius: 50%; border: 1px solid var(--border); align-self: center; margin-top: auto; margin-bottom: auto; }
+
+    .blueprint-info { padding: 24px; }
+    .blueprint-info h3 { font-family: var(--font-body); font-size: 16px; font-weight: 500; margin-bottom: 12px; color: var(--foreground); }
+    .blueprint-info p { font-family: var(--font-mono); font-size: 10px; color: var(--muted); line-height: 1.6; text-transform: uppercase; letter-spacing: 0.05em; }
+
+    /* ═══════════ UI COMPONENTS ═══════════ */
+    .btn-showcase {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 32px;
+      padding: 60px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .z-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px 36px;
+      border-radius: 999px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.4s var(--ease-out);
+      text-decoration: none;
+    }
+    
+    .z-btn-primary {
+      background: var(--foreground);
+      color: var(--bg);
+      border: 1px solid var(--foreground);
+    }
+    .z-btn-primary:hover {
+      background: transparent;
+      color: var(--foreground);
+    }
+    
+    .z-btn-ghost {
+      background: transparent;
+      color: var(--muted);
+      border: 1px solid var(--border);
+    }
+    .z-btn-ghost:hover {
+      border-color: rgba(198, 249, 31, 0.4);
+      color: var(--foreground);
+      box-shadow: inset 0 0 20px rgba(198, 249, 31, 0.05);
+    }
+
+    /* ═══════════ ZAITEX COMPONENT SYSTEM ═══════════ */
+    .z-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+      gap: 24px;
+    }
+    .z-card-wrap {
+      display: flex;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      overflow: hidden;
+      aspect-ratio: 4/3;
+      transition: border-color 0.4s ease;
+    }
+    .z-card-wrap:hover {
+      border-color: rgba(198, 249, 31, 0.3);
+    }
+    .z-card-inner {
+      flex: 1;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      padding: 32px;
+      border-right: 1px solid var(--border);
+    }
+    .z-card-bg {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+    }
+    .z-card-bg img {
+      width: 100%; height: 100%; object-fit: cover; opacity: 0.6; mix-blend-mode: screen; filter: grayscale(1);
+      transition: transform 1s ease, filter 1s ease;
+    }
+    .z-card-wrap:hover .z-card-bg img {
+      transform: scale(1.05);
+      filter: grayscale(0.2);
+    }
+    .z-card-bg::after {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(to top, var(--surface) 20%, transparent 100%);
+    }
+    .z-top-bar {
+      position: relative; z-index: 1;
+      display: flex; justify-content: space-between;
+      font-family: var(--font-mono); font-size: 10px; color: var(--muted); letter-spacing: 0.2em; text-transform: uppercase;
+    }
+    .z-title-box {
+      margin-top: auto; position: relative; z-index: 1; margin-bottom: 24px;
+    }
+    .z-title-box h2 {
+      font-family: var(--font-body); font-weight: 700; font-size: 38px; color: var(--foreground); line-height: 1; letter-spacing: -0.02em; text-transform: uppercase;
+    }
+    .z-bot-bar {
+      position: relative; z-index: 1;
+      display: flex; justify-content: space-between; align-items: flex-end;
+      font-family: var(--font-mono); font-size: 9px; color: var(--muted); letter-spacing: 0.15em; text-transform: uppercase;
+    }
+    .z-bot-left { display: flex; align-items: center; gap: 8px; }
+    .z-bot-left::before { content: '•'; color: var(--accent); }
+    .z-sidebar {
+      width: 48px; display: flex; flex-direction: column; justify-content: space-between; align-items: center; padding: 32px 0; background: rgba(0,0,0,0.2);
+    }
+    .z-side-text {
+      font-family: var(--font-mono); font-size: 10px; color: var(--muted); letter-spacing: 0.4em; text-transform: uppercase;
+      writing-mode: vertical-rl; transform: rotate(180deg);
+    }
+    .z-side-num {
+      font-family: var(--font-mono); font-size: 10px; color: var(--accent); font-weight: bold;
+    }
+
+    /* ═══════════ FOOTER ═══════════ */
+    .moodboard-footer {
+      text-align: center;
+      padding: 80px 20px 60px;
+      border-top: 1px solid var(--border);
+    }
+
+    .moodboard-footer .logo-text {
+      font-family: var(--font-display);
+      font-size: 18px;
+      letter-spacing: 0.2em;
+      color: rgba(250, 250, 249, 0.3);
+      text-transform: uppercase;
+    }
+
+    .moodboard-footer .logo-text .accent-dot { color: var(--accent); }
+
+    .moodboard-footer .credit {
+      margin-top: 16px;
+      font-family: var(--font-mono);
+      font-size: 9px;
+      letter-spacing: 0.12em;
+      color: rgba(250, 250, 249, 0.15);
+      text-transform: uppercase;
+    }
+
+    /* ═══════════ REVEAL ANIMATION ═══════════ */
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.8s var(--ease-out), transform 0.8s var(--ease-out);
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Stagger children */
+    .stagger > .reveal:nth-child(1) { transition-delay: 0s; }
+    .stagger > .reveal:nth-child(2) { transition-delay: 0.08s; }
+    .stagger > .reveal:nth-child(3) { transition-delay: 0.16s; }
+    .stagger > .reveal:nth-child(4) { transition-delay: 0.24s; }
+    .stagger > .reveal:nth-child(5) { transition-delay: 0.32s; }
+    .stagger > .reveal:nth-child(6) { transition-delay: 0.40s; }
+    .stagger > .reveal:nth-child(7) { transition-delay: 0.48s; }
+    .stagger > .reveal:nth-child(8) { transition-delay: 0.56s; }
+
+    /* ═══════════ KEYFRAMES ═══════════ */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+
+    @keyframes scrollPulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.2; }
+    }
+
+    /* ═══════════ RESPONSIVE ═══════════ */
+    @media (max-width: 1024px) {
+      .masonry { columns: 2; }
+      .texture-strip { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (max-width: 640px) {
+      .masonry { columns: 1; }
+      .type-row { grid-template-columns: 1fr; gap: 12px; }
+      .texture-strip { grid-template-columns: 1fr 1fr; }
+      .hero-year { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ═══════ HERO ═══════ -->
+  <section class="hero">
+    <div class="hero-eyebrow">
+      <span>STHLM HQ</span>
+      <span>AESTHETICS (CORE)</span>
+    </div>
+    <h1 class="hero-title">Mood<br>Board<span class="accent-dot">.</span></h1>
+    <p class="hero-subtitle">THE VISUAL LANGUAGE OF ZAITEX — ENGINEERED PRECISION</p>
+
+    <div class="hero-scroll-hint">
+      <div class="line"></div>
+      <span>Scroll</span>
+    </div>
+
+    <div class="hero-year">Zaitex — 2026</div>
+  </section>
+
+  <!-- ═══════ COLOR PALETTE ═══════ -->
+  <div class="divider"></div>
+  <section class="section">
+    <div class="section-label reveal">
+      <div class="dot"></div>
+      <span>01 — Color Palette</span>
+    </div>
+
+    <div class="palette-grid stagger">
+      <div class="swatch reveal" onclick="copyHex(this, '#020202')">
+        <div class="swatch-color" style="background: #020202;"></div>
+        <div class="swatch-info">
+          <span class="swatch-name">Background</span>
+          <span class="swatch-hex">#020202</span>
+        </div>
+        <div class="copied-toast">COPIED</div>
+      </div>
+      <div class="swatch reveal" onclick="copyHex(this, '#0a0a0a')">
+        <div class="swatch-color" style="background: #0a0a0a;"></div>
+        <div class="swatch-info">
+          <span class="swatch-name">Surface</span>
+          <span class="swatch-hex">#0a0a0a</span>
+        </div>
+        <div class="copied-toast">COPIED</div>
+      </div>
+      <div class="swatch reveal" onclick="copyHex(this, '#111111')">
+        <div class="swatch-color" style="background: #111111;"></div>
+        <div class="swatch-info">
+          <span class="swatch-name">Elevated</span>
+          <span class="swatch-hex">#111111</span>
+        </div>
+        <div class="copied-toast">COPIED</div>
+      </div>
+      <div class="swatch reveal" onclick="copyHex(this, '#c6f91f')">
+        <div class="swatch-color" style="background: #c6f91f;"></div>
+        <div class="swatch-info">
+          <span class="swatch-name">Accent</span>
+          <span class="swatch-hex">#c6f91f</span>
+        </div>
+        <div class="copied-toast">COPIED</div>
+      </div>
+      <div class="swatch reveal" onclick="copyHex(this, '#ffffff')">
+        <div class="swatch-color" style="background: #ffffff; border-bottom: 1px solid var(--border);"></div>
+        <div class="swatch-info">
+          <span class="swatch-name">Foreground</span>
+          <span class="swatch-hex">#FFFFFF</span>
+        </div>
+        <div class="copied-toast">COPIED</div>
+      </div>
+      <div class="swatch reveal" onclick="copyHex(this, '#888888')">
+        <div class="swatch-color" style="background: #888888;"></div>
+        <div class="swatch-info">
+          <span class="swatch-name">Muted</span>
+          <span class="swatch-hex">#888888</span>
+        </div>
+        <div class="copied-toast">COPIED</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════ TYPOGRAPHY ═══════ -->
+  <div class="divider"></div>
+  <section class="section">
+    <div class="section-label reveal">
+      <div class="dot"></div>
+      <span>02 — Typography</span>
+    </div>
+
+    <div class="reveal">
+      <div class="type-row">
+        <div class="type-label">
+          Bebas Neue
+          <span class="purpose">Headlines & Display</span>
+        </div>
+        <div class="type-specimen type-display">THE ONLY DIGITAL PARTNER YOU WILL EVER NEED.</div>
+      </div>
+
+      <div class="type-row">
+        <div class="type-label">
+          Satoshi
+          <span class="purpose">Body & Interface</span>
+        </div>
+        <div class="type-specimen type-body">We build unified digital ecosystems — identity, web, content, and growth.</div>
+      </div>
+
+      <div class="type-row">
+        <div class="type-label">
+          JetBrains Mono
+          <span class="purpose">Data & System</span>
+        </div>
+        <div class="type-specimen type-mono">systems.build({precision: true, craft: 'infinite'})</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════ MOOD KEYWORDS ═══════ -->
+  <div class="divider"></div>
+  <div class="keywords" id="keywords-section">
+    <span class="keyword reveal">Precision</span>
+    <span class="keyword reveal">Monolith</span>
+    <span class="keyword reveal">Engineered</span>
+    <span class="keyword reveal">Strict</span>
+    <span class="keyword reveal">Brutalist</span>
+    <span class="keyword reveal">System</span>
+    <span class="keyword reveal">Tech-Forward</span>
+    <span class="keyword reveal">Obsidian</span>
+    <span class="keyword reveal">Asymmetrical</span>
+    <span class="keyword reveal">Futuristic</span>
+    <span class="keyword reveal">Abstract</span>
+    <span class="keyword reveal">Cinematic</span>
+  </div>
+
+  <!-- ═══════ ZAITEX COMPONENT SYSTEM (TECH GRID) ═══════ -->
+  <div class="divider"></div>
+  <section class="section">
+    <div class="section-label reveal">
+      <div class="dot"></div>
+      <span>03 — Component Language (Tech Grid)</span>
+    </div>
+
+    <div class="z-grid stagger">
+      <!-- Card 1 -->
+      <div class="z-card-wrap reveal">
+        <div class="z-card-inner">
+          <div class="z-card-bg">
+            <img src="public/images/abstract-monochrome-mountain-passage-4k.webp" alt="Identity BG">
+          </div>
+          <div class="z-top-bar"><span>01 — IDENTITY</span> <span>IDENTITY</span></div>
+          <div class="z-title-box"><h2>BRAND<br>IDENTITY</h2></div>
+          <div class="z-bot-bar">
+            <div class="z-bot-left">THE ESSENCE OF YOUR BRAND AND COMPANY</div>
+            <div>SEE MORE ↗</div>
+          </div>
+        </div>
+        <div class="z-sidebar">
+          <div class="z-side-text">IDENTITY</div>
+          <div class="z-side-num">01</div>
+        </div>
+      </div>
+
+      <!-- Card 2 -->
+      <div class="z-card-wrap reveal">
+        <div class="z-card-inner">
+          <div class="z-card-bg">
+            <img src="public/images/abstract-iridescent-petal-shapes-on-black-4k.webp" alt="Web BG">
+          </div>
+          <div class="z-top-bar"><span>02 — WEB</span> <span>WEB</span></div>
+          <div class="z-title-box"><h2>WEB<br>PLATFORM</h2></div>
+          <div class="z-bot-bar">
+            <div class="z-bot-left">ARCHITECTURE, PERFORMANCE & CONVERSION</div>
+            <div>SEE MORE ↗</div>
+          </div>
+        </div>
+        <div class="z-sidebar">
+          <div class="z-side-text">WEB</div>
+          <div class="z-side-num">02</div>
+        </div>
+      </div>
+
+      <!-- Card 3 -->
+      <div class="z-card-wrap reveal">
+        <div class="z-card-inner">
+          <div class="z-card-bg">
+            <img src="public/images/dramatic-low-key-portrait-with-red-backdrop-4k.webp" alt="Creative BG">
+          </div>
+          <div class="z-top-bar"><span>03 — CREATIVE</span> <span>CREATIVE</span></div>
+          <div class="z-title-box"><h2>CREATIVE<br>STUDIO</h2></div>
+          <div class="z-bot-bar">
+            <div class="z-bot-left">CONTENT PRODUCTION & ONGOING CREATIVE OUTPUT</div>
+            <div>SEE MORE ↗</div>
+          </div>
+        </div>
+        <div class="z-sidebar">
+          <div class="z-side-text">CREATIVE</div>
+          <div class="z-side-num">03</div>
+        </div>
+      </div>
+
+      <!-- Card 4 -->
+      <div class="z-card-wrap reveal">
+        <div class="z-card-inner">
+          <div class="z-card-bg">
+            <img src="public/images/monochrome-portrait-of-woman-in-blazer-4k.webp" alt="Growth BG">
+          </div>
+          <div class="z-top-bar"><span>04 — GROWTH</span> <span>GROWTH</span></div>
+          <div class="z-title-box"><h2>MARKETING<br>& GROWTH</h2></div>
+          <div class="z-bot-bar">
+            <div class="z-bot-left">GTM, OUTREACH & INTELLIGENT SYSTEMS</div>
+            <div>SEE MORE ↗</div>
+          </div>
+        </div>
+        <div class="z-sidebar">
+          <div class="z-side-text">GROWTH</div>
+          <div class="z-side-num">04</div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ═══════ DIGITAL OUTPUT BLUEPRINTS ═══════ -->
+  <div class="divider"></div>
+  <section class="section">
+    <div class="section-label reveal">
+      <div class="dot"></div>
+      <span>04 — Digital Output Blueprints</span>
+    </div>
+
+    <div class="blueprints-grid stagger">
+      
+      <!-- Website Hero -->
+      <div class="blueprint-card reveal">
+        <div class="blueprint-preview bp-hero">
+           <div class="bp-hero-top"><span>STHLM HQ</span><span>SCROLL</span></div>
+           <div class="bp-hero-sub">PREMIUM DIGITAL AGENCY</div>
+           <div class="bp-hero-title">WEBSITE<br>HERO</div>
+        </div>
+        <div class="blueprint-info">
+          <h3>Website Hero</h3>
+          <p>Ethereal typography, dark atmospheric gradient backgrounds. Bebas Neue dominating center.</p>
+        </div>
+      </div>
+
+      <!-- Editorial Split -->
+      <div class="blueprint-card reveal">
+        <div class="blueprint-preview bp-edit">
+           <div class="bp-edit-text">
+              <div class="bp-hero-top" style="position:relative;top:0;left:0;"><span>ARTBOARD TRADEMARK</span></div>
+              <div>
+                <div class="bp-edit-title">EDITORIAL<br>SPLIT</div>
+                <div class="bp-hero-sub" style="text-align:left;margin-top:16px;">STRICT / CINEMATIC</div>
+              </div>
+           </div>
+           <div class="bp-edit-img">
+           </div>
+        </div>
+        <div class="blueprint-info">
+          <h3>Editorial Split</h3>
+          <p>Strict vertical division. Heavy vignettes, brutalist spacing. Artboard aesthetic.</p>
+        </div>
+      </div>
+
+      <!-- Minimalist -->
+      <div class="blueprint-card reveal">
+        <div class="blueprint-preview bp-min">
+           <div class="bp-hero-top"><span>01</span><span>INFO</span></div>
+           <div class="bp-min-title">MINIMALIST<br>STATEMENT</div>
+           <div class="bp-min-circle"></div>
+        </div>
+        <div class="blueprint-info">
+          <h3>Minimalist Statement</h3>
+          <p>Satoshi-driven typography. Circular abstract focal point. Extreme negative space.</p>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ═══════ MASONRY GRID ═══════ -->
+  <!-- ═══════ UI COMPONENTS / BUTTONS ═══════ -->
+  <div class="divider"></div>
+  <section class="section">
+    <div class="section-label reveal">
+      <div class="dot"></div>
+      <span>05 — Interactive Elements</span>
+    </div>
+
+    <div class="btn-showcase reveal stagger">
+      <!-- Primary Core Button -->
+      <a href="#" class="z-btn z-btn-primary reveal">START PROJECT <span style="margin-left:8px;opacity:0.5;">↗</span></a>
+      
+      <!-- Ghost Secondary Button -->
+      <a href="#" class="z-btn z-btn-ghost reveal">VIEW CASE STUDY</a>
+
+      <!-- Icon Only Nav/CTA -->
+      <a href="#" class="z-btn z-btn-ghost reveal" style="padding:16px; border-radius:50%; width: 48px; height: 48px;"><span style="transform:translateY(-1px);">↘</span></a>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+  <section class="section">
+    <div class="section-label reveal">
+      <div class="dot"></div>
+      <span>06 — Visual References</span>
+    </div>
+
+    <div class="masonry stagger" id="masonry-grid">
+      <div class="masonry-tile reveal">
+        <img src="public/images/moodboard/mood-architecture.png" alt="Brutalist architecture">
+        <div class="overlay"><span class="overlay-text">Architecture</span></div>
+      </div>
+      <div class="masonry-tile reveal">
+        <img src="public/images/abstract-monochrome-mountain-passage-4k.webp" alt="Mountain passage">
+        <div class="overlay"><span class="overlay-text">Monochrome Depth</span></div>
+      </div>
+      <div class="masonry-tile reveal">
+        <img src="public/images/moodboard/mood-portrait.png" alt="Portrait">
+        <div class="overlay"><span class="overlay-text">Neon Portrait</span></div>
+      </div>
+      <div class="masonry-tile reveal">
+        <img src="public/images/futuristic-black-helmet-portrait-on-dark-background-4k.webp" alt="Futuristic helmet">
+        <div class="overlay"><span class="overlay-text">Dark Futurism</span></div>
+      </div>
+      <div class="masonry-tile reveal">
+        <img src="public/images/elegant-floral-still-life-featuring-single-black-flower-clean-lines-simple-composition.webp" alt="Floral still life">
+        <div class="overlay"><span class="overlay-text">Minimal Flora</span></div>
+      </div>
+      <div class="masonry-tile reveal">
+        <img src="public/images/fragmented-marble-sculpture-black-background.webp" alt="Marble sculpture">
+        <div class="overlay"><span class="overlay-text">Fragmented Form</span></div>
+      </div>
+      <div class="masonry-tile reveal">
+        <img src="public/images/abstract-iridescent-petal-shapes-on-black-4k.webp" alt="Iridescent Form">
+        <div class="overlay"><span class="overlay-text">Fluid Monolith</span></div>
+      </div>
+      <div class="masonry-tile reveal">
+        <img src="public/images/futuristic-silhouette-wearing-vr-headset-4k.webp" alt="VR silhouette">
+        <div class="overlay"><span class="overlay-text">Digital Human</span></div>
+      </div>
+      <div class="masonry-tile reveal">
+        <img src="public/images/minimalist-stippled-monochrome-wave-illustration-4k.webp" alt="Wave illustration">
+        <div class="overlay"><span class="overlay-text">Texture Study</span></div>
+      </div>
+      <div class="masonry-tile reveal">
+        <img src="public/images/modern-coastal-house-in-fog-at-dusk-4k.webp" alt="Coastal house">
+        <div class="overlay"><span class="overlay-text">Atmospheric Space</span></div>
+      </div>
+      <div class="masonry-tile reveal">
+        <img src="public/images/monochrome-portrait-of-woman-in-blazer-4k.webp" alt="Fashion portrait">
+        <div class="overlay"><span class="overlay-text">Fashion Editorial</span></div>
+      </div>
+      <div class="masonry-tile reveal">
+        <img src="public/images/abstract-ink-wash-landscape-with-gold-accents.webp" alt="Ink wash landscape">
+        <div class="overlay"><span class="overlay-text">Ink & Gold</span></div>
+      </div>
+      <div class="masonry-tile reveal">
+        <img src="public/images/elegant-woman-portrait-with-digital-glitch-4k.webp" alt="Glitch portrait">
+        <div class="overlay"><span class="overlay-text">Digital Glitch</span></div>
+      </div>
+      <div class="masonry-tile reveal">
+        <img src="public/images/solitary-figure-on-misty-cliffs-with-orange-cube-4k.webp" alt="Misty cliffs">
+        <div class="overlay"><span class="overlay-text">Surreal Landscape</span></div>
+      </div>
+      <div class="masonry-tile reveal">
+        <img src="public/images/cyberpunk-figure-facing-neon-cinema-sign-4k.webp" alt="Neon cinema">
+        <div class="overlay"><span class="overlay-text">Neon Cinema</span></div>
+      </div>
+      <div class="masonry-tile reveal">
+        <img src="public/images/snowy-mountain-peak-in-red-alpenglow-at-dusk-4k.webp" alt="Mountain alpenglow">
+        <div class="overlay"><span class="overlay-text">Crimson Peak</span></div>
+      </div>
+      <div class="masonry-tile reveal">
+        <img src="public/images/futuristic-neon-fashion-portrait-4k.webp" alt="Neon fashion">
+        <div class="overlay"><span class="overlay-text">Neon Couture</span></div>
+      </div>
+      <div class="masonry-tile reveal">
+        <img src="public/images/moodboard/mood-liquid-metal.png" alt="Liquid metal texture">
+        <div class="overlay"><span class="overlay-text">Mercury Surface</span></div>
+      </div>
+      <div class="masonry-tile reveal">
+        <img src="public/images/moody-portrait-with-butterfly-on-eye-4k.webp" alt="Butterfly portrait">
+        <div class="overlay"><span class="overlay-text">Poetic Detail</span></div>
+      </div>
+      <div class="masonry-tile reveal">
+        <img src="public/images/abstract-iridescent-petal-shapes-on-black-4k.webp" alt="Iridescent petals">
+        <div class="overlay"><span class="overlay-text">Iridescent Form</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════ FOOTER ═══════ -->
+  <footer class="moodboard-footer">
+    <div class="logo-text">Zaitex<span class="accent-dot">.</span></div>
+    <p class="credit">Living Moodboard — Brand DNA System — 2026</p>
+  </footer>
+
+
+  <!-- ═══════════ SCRIPTS ═══════════ -->
+  <script>
+    /* ── Scroll Reveal (IntersectionObserver) ── */
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+    /* ── Copy Hex ── */
+    function copyHex(swatch, hex) {
+      navigator.clipboard.writeText(hex).then(() => {
+        const toast = swatch.querySelector('.copied-toast');
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 1200);
+      });
+    }
+
+    /* ── Parallax on mouse (hero) ── */
+    const hero = document.querySelector('.hero');
+    hero.addEventListener('mousemove', (e) => {
+      const x = (e.clientX / window.innerWidth - 0.5) * 12;
+      const y = (e.clientY / window.innerHeight - 0.5) * 12;
+      hero.querySelector('.hero-title').style.transform = `translate(${x}px, ${y}px)`;
+    });
+
+    /* ── Masonry tile tilt ── */
+    document.querySelectorAll('.masonry-tile').forEach(tile => {
+      tile.addEventListener('mousemove', (e) => {
+        const rect = tile.getBoundingClientRect();
+        const x = (e.clientX - rect.left) / rect.width;
+        const y = (e.clientY - rect.top) / rect.height;
+        const rotX = (y - 0.5) * -6;
+        const rotY = (x - 0.5) * 6;
+        tile.style.transform = `perspective(800px) rotateX(${rotX}deg) rotateY(${rotY}deg) scale(1.015)`;
+      });
+      tile.addEventListener('mouseleave', () => {
+        tile.style.transform = '';
+      });
+    });
+
+    /* ── Keyword float animation ── */
+    document.querySelectorAll('.keyword').forEach((kw, i) => {
+      kw.style.animationDelay = `${i * 0.06}s`;
+    });
+  </script>
+</body>
+</html>
