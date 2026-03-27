@@ -1,16 +1,4 @@
 .env
-temp/
 __pycache__/
 *.pyc
-
-# Generated output files (MP4, images)
-*.mp4
-*.jpg
-*.png
-
-# FFmpeg binaries (too large for GitHub)
-ffmpeg.exe
-ffprobe.exe
-
-# Temp/debug scripts
-test_models.py
+temp/
